@@ -2,7 +2,7 @@
 
 # 1) Run the "Interface.R" script
 
-# 2) For GBA, run GBA(modelname,predict.parameters,is.reversible) where
+# 2) For GBA, run GBA(modelname,predict.parameters,is.reversible) , where
 
 # modelname: name of a document in the Models folder in quotes, e.g. "L3"
 
@@ -16,7 +16,7 @@
 # Example: 
 # GBA("L3",3,0)
 
-# 3) For GM, run (modelname,predict.parameters,is.reversible,delta_t,totalT), where
+# 3) For GM, run GM(modelname,predict.parameters,is.reversible,delta_t,totalT) , where
 
 # modelname: name of a document in the Models folder in quotes, e.g. "L3"
 
@@ -36,4 +36,5 @@
 
 # for accurate Lambda calculations, use smaller dt, e.g. dt = 0.00001
 # GM("L3",3,0,0.00001,3)
+
 
