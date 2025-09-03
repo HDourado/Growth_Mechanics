@@ -1,8 +1,10 @@
 # Functions for GBA and GM
 
-# 1) Run the "Interface.R" script
+# 1) Download all the files and folders and put them in the same local folder.
 
-# 2) For GBA, run GBA(modelname,predict.parameters,is.reversible) , where
+# 2) Run the "Interface.R" script.
+
+# 3) For GBA, run GBA(modelname,predict.parameters,is.reversible) , where
 
 # modelname: name of a document in the Models folder in quotes, e.g. "L3"
 
@@ -16,7 +18,7 @@
 # Example: 
 # GBA("L3",3,0)
 
-# 3) For GM, run GM(modelname,predict.parameters,is.reversible,delta_t,totalT) , where
+# 4) For GM, run GM(modelname,predict.parameters,is.reversible,delta_t,totalT) , where
 
 # modelname: name of a document in the Models folder in quotes, e.g. "L3"
 
@@ -39,4 +41,5 @@
 
 # for accurate frequency nu calculation via FFT, use larger totalT, T = 100
 # GM("L3",3,0,0.001,100)
+
 
