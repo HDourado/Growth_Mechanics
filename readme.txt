@@ -1,6 +1,6 @@
 # Functions for GBA and GM
 
-# 1) Run this whole script
+# 1) Run the "Interface.R" script
 
 # 2) For GBA, run GBA(modelname,predict.parameters,is.reversible) where
 
@@ -36,3 +36,4 @@
 
 # for accurate Lambda calculations, use smaller dt, e.g. dt = 0.00001
 # GM("L3",3,0,0.00001,3)
+
