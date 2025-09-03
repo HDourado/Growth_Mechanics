@@ -36,7 +36,7 @@ source("GM_Frequency.R")
 
 source("GM_main.R")
 
-if (totalT >= 100) source("GM_averages.R")
+source("GM_averages.R")
 
 #if (r == 3) source("GM_fields.R")
 
@@ -50,9 +50,9 @@ if (min(phit) < 0) print("negative phi!")
 
 if (min(chit[-c(1:5),]) < 0) print("negative chi!") 
 
-Lambda <<- mean(mu_opt)
+################################################################################
 
-print(paste("nu      =", mu_f))
+print(paste("nu      =", nu) )
 
 print(paste("mu*     =", muOGS))
 
@@ -60,6 +60,6 @@ print(paste("Lambda  =", Lambda))
 
 print(paste("varphi0 =", varphi0))
 
-print("--------------------------------------------")
+print(paste("nu_c/nu =", Lambda/log(2,base = exp(1))/nu) )
 
-h <- (1 - varphi0/Lambda)*log(2)
+print("--------------------------------------------")

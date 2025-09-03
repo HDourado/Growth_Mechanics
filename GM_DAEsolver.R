@@ -147,10 +147,6 @@ dq0_consistent[abs(dq0_consistent) < 1e-7] <- 0 # removes numerical artifacts
 # "cleans" numerical noise in q0_1 if there is only 1 transporter
 if (n_tr == 1) q0[1] <- 1/s[1]
 
-mu0 <- mu(q0,dq0,0)
-
-tau0 <- tau(0,rho*b(q0))
-
 # measuring the total optimization time
 st <- system.time({
   
@@ -164,6 +160,13 @@ st <- system.time({
 nt <- dim(DAE)[1] 
 
 qt <- DAE[,-1]
+
+# pick second time point for q0, to avoid numerical issues with first point
+q0 <- qt[2,]
+
+mu0 <- mu(q0,dq0,0)
+
+tau0 <- tau(0,rho*b(q0))
 
 # "cleans" numerical noise in dqt_1 if there is only 1 transporter
 if (n_tr == 1) qt[,1] <- 1/s[1]
@@ -309,7 +312,7 @@ average <- function(input) {
 
 # average mu
 amu <- mu_opt
-for (t in 1:nt) amu[t] <- sum(mu_opt[1:t])/t
+for (t in 1:nt) amu[t] <- mean(mu_opt[1:t])
 
 cols <- colorRampPalette(c( "green","darkgreen"))
 

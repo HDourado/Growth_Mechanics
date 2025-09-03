@@ -18,6 +18,8 @@ require('gplots')
 require('Rlibeemd')
 require('sfsmisc')
 
+options(digits=10)
+
 # Sets working directory to source file location ###############################
 
 directory <- dirname(getActiveDocumentContext()$path)
@@ -61,6 +63,9 @@ GBA <- function(modelname,predict.parameters,is.reversible) {
 # Example:
 # GM("L3",3,0,0.001,3)
 
+# for accurate average mu calculations, use smaller dt, e.g. dt = 0.00001
+# GM("L3",3,0,0.00001,3)
+
 GM <- function(modelname,predict.parameters,is.reversible,delta_t,totalT) {
   
   # first deletes all variables from previous calculations 
@@ -84,13 +89,21 @@ GM <- function(modelname,predict.parameters,is.reversible,delta_t,totalT) {
   # reads model
   suppressMessages(source("Readmodelods.R"))
   
-  rtol <<- 1e-8 
+  rtol <<- 1e-8
+  
+  options(digits=10)
   
   suppressMessages(source("GM.R"))
   
 }
 
-# Function to do many GM simulations with different x, given a model with fixed x
+# Example:
+# GM("L3",3,0,0.001,3)
+
+# For more accurate (and slower) average mu calculations, use smaller dt, e.g. dt = 0.00001
+# GM("L3",3,0,0.00001,3)
+
+# Function to do many GM simulations for a model in different static media
 GMmeta <- function(modelname,predict.parameters,is.reversible,delta_t,totalT,nmeta) {
   
   # first deletes all variables from previous calculations 
@@ -137,14 +150,14 @@ GMmeta <- function(modelname,predict.parameters,is.reversible,delta_t,totalT,nme
     
     source("GM.R")
     
-    # do it again if negative chi
-    while (min(chit[-c(1:5),]) < 0) { # ignores first 5 points, due to possible numerical artifacts
-
-      dq0[r] <<- dq0[r]*0.9
-
-      source("GM.R")
-
-    }
+    # # do it again if negative chi
+    # while (min(chit[-c(1:5),]) < 0) { # ignores first 5 points, due to possible numerical artifacts
+    # 
+    #   dq0[r] <<- dq0[r]*0.9
+    # 
+    #   source("GM.R")
+    # 
+    # }
     
     dq0[r] <<- dq0[r]*0.9
     
@@ -170,19 +183,19 @@ GMmeta <- function(modelname,predict.parameters,is.reversible,delta_t,totalT,nme
     
     print("----- END ------")
     
-    source("Extra plots.R")
+    source("GM_extra plots.R")
   
 }
 
 # Example:
 # GMmeta("L3",3,0,0.001,10)
 
-# Function to do many GM simulations with different at, given a model with fixed at
-GMresonance <- function(modelname,predict.parameters,is.reversible,delta_t,totalT) {
+# Function to do many GM simulations for a model in a static media with different initial conditions
+GMinitial <- function(modelname,predict.parameters,is.reversible,delta_t,totalT,n_initial) {
   
   # first deletes all variables from previous calculations 
   rm(list=setdiff(ls(), c("modelname","predict.parameters", "is.reversible",
-                          "delta_t","totalT")))
+                          "delta_t","totalT","n_initial")))
   
   modelname <<- modelname
   
@@ -201,39 +214,50 @@ GMresonance <- function(modelname,predict.parameters,is.reversible,delta_t,total
   # reads model
   suppressMessages(source("Readmodelods.R"))
   
-  nenv <- 5
+  delta_t <<- 0.00001
   
-  # omega_medium = medium angular frequency
-  omega_medium <<- 3*exp(-2:2)
+  dqr0 <<- c(0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.05)
   
-  results_freq <- list(0)
-  results_mag  <- list(0) 
- 
-  for (itest in 1:nenv) {
-    
-    at   <<- function(t) 1 + 0.5*sin(omega_medium[itest]*t) 
-    
-    dadt <<- function(t) 0.5*omega_medium[itest]*cos(omega_medium[itest]*t) 
-    
-    nu_medium <- signif(omega_medium[itest]/(2*pi), digits=3)
-    
-    modelname <<- paste(modelname,"_num_",nu_medium,sep="")
+  for (itest in 1:length(dqr0)) {
     
     rtol <<- 1e-8
     
+    print("----------------------")
+    
+    print(paste("Optimization",itest,"of",length(dqr0)))
+    
+    dq0[r] <<- dqr0[itest] 
+    
     source("GM.R")
     
-    # results to save (x,freq, mu, amplitude)
-    results_freq[[itest]] <- frequencies[-1]
+    # results to save (at,freq, mu, amplitude)
+    if(itest == 1) results_freq <- c(dqr0[itest], Lambda , max(mu_opt) - min(mu_opt), varphi0, mean(bt[,p]), nu )
     
-    results_mag[[itest]]  <- magnitudes[-1]
+    if(itest > 1)  results_freq <- rbind(results_freq, c(dqr0[itest], Lambda, max(mu_opt) - min(mu_opt), varphi0, mean(bt[,p]), nu) )
     
   }
+  
+  setwd(paste(directory,"/Meta",sep=""))
+  
+  # export results
+  write.csv(results_freq, file = paste("initial ",modelname,".csv",sep=""))
+  
+  png(paste("Initial ",modelname,".png",sep=""),res=600, units = "in", width=5,height=5)
+  
+  par(mfrow=c(1,1))
+  
+  plot(amplitude_i,100*gap,pch=16, xlab=bquote("Amplitude of" ~  mu(t) ), ylab=bquote("Difference between " ~  Lambda ~ "and" ~ mu ~ "* (%)" ) )
+  
+  dev.off()
+  
+  setwd(directory)
+  
+  print("----- END ------")
   
 }
 
 # Example:
-# GMresonance("L3",3,0,0.001,15)
+# GMinitial("L3",3,0,0.00001,3)
 
 dev.off()
 

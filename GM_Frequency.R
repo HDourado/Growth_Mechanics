@@ -180,6 +180,10 @@ if (r > 4) {
 
 }
 
+if (mu_f > 10*varphi0) mu_f <- freqs[1]
+
+mu_T <-1/mu_f
+
 # Make pie/clock chart with order which biomass allocation peaks
 period <- round(mu_T/delta_t)
 
