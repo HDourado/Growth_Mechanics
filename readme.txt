@@ -34,7 +34,9 @@
 # Example:
 # GM("L3",3,0,0.001,3)
 
-# for accurate Lambda calculations, use smaller dt, e.g. dt = 0.00001
+# for more accurate long-term growth rate Lambda calculation, use smaller dt, e.g. dt = 0.00001
 # GM("L3",3,0,0.00001,3)
 
+# for accurate frequency nu calculation via FFT, use larger totalT, T = 100
+# GM("L3",3,0,0.001,100)
 
