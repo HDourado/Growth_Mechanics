@@ -60,6 +60,7 @@ print(paste("Lambda  =", Lambda))
 
 print(paste("varphi0 =", varphi0))
 
+# ratio between cell cycle frequency/biomass allocation frequency
 print(paste("nu_c/nu =", Lambda/log(2,base = exp(1))/nu) )
 
 print("--------------------------------------------")
